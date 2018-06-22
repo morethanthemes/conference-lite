@@ -6,6 +6,7 @@ version: '@VERSION@'
 core: 8.x
 libraries:
   - conference_lite/global-styling
+  - conference_lite/background-image-block
   - conference_lite/messages
   - conference_lite/tooltip
   - conference_lite/local-stylesheets
