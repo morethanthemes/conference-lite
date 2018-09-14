@@ -147,11 +147,7 @@ function conference_lite_form_system_theme_settings_alter(&$form, &$form_state) 
   $form['mtt_settings']['regions_tab']['regions']['premium_description'] = array(
    '#type' => 'item',
    '#markup' =>
-   '<div class="theme-settings-title">'.t("Available in the Premium version of this theme").'</div>
-   <div class="theme-settings-image-wrapper">
-   <a href="https://morethanthemes.com/themes/conferenceplus?utm_source=conference-lite-demo&utm_medium=theme-settings&utm_campaign=free-themes" target="_blank">
-   <img src="' . base_path() . drupal_get_path('theme', 'conference_lite') . '/images/premium-01-region.jpg" />
-   </a></div> ',
+   '<div class="theme-settings-title theme-settings-title--premium-link"><a href="https://morethanthemes.com/themes/conferenceplus?utm_source=conference-lite-demo&utm_medium=theme-settings&utm_campaign=free-themes" target="_blank">'.t("Available in the Premium version of this theme").'</a></div>',
   );
 
   $form['mtt_settings']['front_page_tab']['front_page'] = array(
@@ -165,11 +161,7 @@ function conference_lite_form_system_theme_settings_alter(&$form, &$form_state) 
   $form['mtt_settings']['front_page_tab']['front_page']['premium_description'] = array(
    '#type' => 'item',
    '#markup' =>
-   '<div class="theme-settings-title">'.t("Available in the Premium version of this theme").'</div>
-   <div class="theme-settings-image-wrapper">
-   <a href="http://morethanthemes.com/themes/conferenceplus?utm_source=conference-lite-demo&utm_medium=theme-settings&utm_campaign=free-themes" target="_blank">
-   <img src="' . base_path() . drupal_get_path('theme', 'conference_lite') . '/images/premium-02-frontpage.jpg" />
-   </a></div> ',
+   '<div class="theme-settings-title theme-settings-title--premium-link"><a href="https://morethanthemes.com/themes/conferenceplus?utm_source=conference-lite-demo&utm_medium=theme-settings&utm_campaign=free-themes" target="_blank">'.t("Available in the Premium version of this theme").'</a></div>',
   );
 
   $form['mtt_settings']['post_tab']['post'] = array(
@@ -183,11 +175,7 @@ function conference_lite_form_system_theme_settings_alter(&$form, &$form_state) 
   $form['mtt_settings']['post_tab']['post']['premium_description'] = array(
    '#type' => 'item',
    '#markup' =>
-   '<div class="theme-settings-title">'.t("Available in the Premium version of this theme").'</div>
-   <div class="theme-settings-image-wrapper">
-   <a href="https://morethanthemes.com/themes/conferenceplus?utm_source=conference-lite-demo&utm_medium=theme-settings&utm_campaign=free-themes" target="_blank">
-   <img src="' . base_path() . drupal_get_path('theme', 'conference_lite') . '/images/premium-03-article.jpg" />
-   </a></div> ',
+   '<div class="theme-settings-title theme-settings-title--premium-link"><a href="https://morethanthemes.com/themes/conferenceplus?utm_source=conference-lite-demo&utm_medium=theme-settings&utm_campaign=free-themes" target="_blank">'.t("Available in the Premium version of this theme").'</a></div>',
   );
 
   $form['mtt_settings']['layout_tab']['layout_modes'] = array(
@@ -201,11 +189,7 @@ function conference_lite_form_system_theme_settings_alter(&$form, &$form_state) 
   $form['mtt_settings']['layout_tab']['layout_modes']['premium_description'] = array(
    '#type' => 'item',
    '#markup' =>
-   '<div class="theme-settings-title">'.t("Available in the Premium version of this theme").'</div>
-   <div class="theme-settings-image-wrapper">
-   <a href="https://morethanthemes.com/themes/conferenceplus?utm_source=conference-lite-demo&utm_medium=theme-settings&utm_campaign=free-themes" target="_blank">
-   <img src="' . base_path() . drupal_get_path('theme', 'conference_lite') . '/images/premium-04-layout.jpg" />
-   </a></div> ',
+   '<div class="theme-settings-title theme-settings-title--premium-link"><a href="https://morethanthemes.com/themes/conferenceplus?utm_source=conference-lite-demo&utm_medium=theme-settings&utm_campaign=free-themes" target="_blank">'.t("Available in the Premium version of this theme").'</a></div>',
   );
 
   $form['mtt_settings']['font_tab']['font'] = array(
@@ -219,11 +203,7 @@ function conference_lite_form_system_theme_settings_alter(&$form, &$form_state) 
   $form['mtt_settings']['font_tab']['font']['premium_description'] = array(
    '#type' => 'item',
    '#markup' =>
-   '<div class="theme-settings-title">'.t("Available in the Premium version of this theme").'</div>
-   <div class="theme-settings-image-wrapper">
-   <a href="https://morethanthemes.com/themes/conferenceplus?utm_source=conference-lite-demo&utm_medium=theme-settings&utm_campaign=free-themes" target="_blank">
-   <img src="' . base_path() . drupal_get_path('theme', 'conference_lite') . '/images/premium-05-fonts.jpg" />
-   </a></div> ',
+   '<div class="theme-settings-title theme-settings-title--premium-link"><a href="https://morethanthemes.com/themes/conferenceplus?utm_source=conference-lite-demo&utm_medium=theme-settings&utm_campaign=free-themes" target="_blank">'.t("Available in the Premium version of this theme").'</a></div>',
   );
 
   $form['mtt_settings']['slideshows_tab']['slideshow'] = array(
@@ -237,11 +217,7 @@ function conference_lite_form_system_theme_settings_alter(&$form, &$form_state) 
   $form['mtt_settings']['slideshows_tab']['slideshow']['premium_description'] = array(
    '#type' => 'item',
    '#markup' =>
-   '<div class="theme-settings-title">'.t("Available in the Premium version of this theme").'</div>
-   <div class="theme-settings-image-wrapper">
-   <a href="https://morethanthemes.com/themes/conferenceplus?utm_source=conference-lite-demo&utm_medium=theme-settings&utm_campaign=free-themes" target="_blank">
-   <img src="' . base_path() . drupal_get_path('theme', 'conference_lite') . '/images/premium-06-slideshow.jpg" />
-   </a></div> ',
+   '<div class="theme-settings-title theme-settings-title--premium-link"><a href="https://morethanthemes.com/themes/conferenceplus?utm_source=conference-lite-demo&utm_medium=theme-settings&utm_campaign=free-themes" target="_blank">'.t("Available in the Premium version of this theme").'</a></div>',
   );
 
   $form['mtt_settings']['in_page_navigation']['in_page_navigation_settings'] = array(
@@ -255,11 +231,7 @@ function conference_lite_form_system_theme_settings_alter(&$form, &$form_state) 
   $form['mtt_settings']['in_page_navigation']['in_page_navigation_settings']['premium_description'] = array(
    '#type' => 'item',
    '#markup' =>
-   '<div class="theme-settings-title">'.t("Available in the Premium version of this theme").'</div>
-   <div class="theme-settings-image-wrapper">
-   <a href="https://morethanthemes.com/themes/conferenceplus?utm_source=conference-lite-demo&utm_medium=theme-settings&utm_campaign=free-themes" target="_blank">
-   <img src="' . base_path() . drupal_get_path('theme', 'conference_lite') . '/images/premium-07-navigation.jpg" />
-   </a></div> ',
+   '<div class="theme-settings-title theme-settings-title--premium-link"><a href="https://morethanthemes.com/themes/conferenceplus?utm_source=conference-lite-demo&utm_medium=theme-settings&utm_campaign=free-themes" target="_blank">'.t("Available in the Premium version of this theme").'</a></div>',
   );
 
   $form['mtt_settings']['isotope_tab'] = array(
@@ -273,11 +245,7 @@ function conference_lite_form_system_theme_settings_alter(&$form, &$form_state) 
   $form['mtt_settings']['isotope_tab']['premium_description'] = array(
    '#type' => 'item',
    '#markup' =>
-   '<div class="theme-settings-title">'.t("Available in the Premium version of this theme").'</div>
-   <div class="theme-settings-image-wrapper">
-   <a href="https://morethanthemes.com/themes/conferenceplus?utm_source=conference-lite-demo&utm_medium=theme-settings&utm_campaign=free-themes" target="_blank">
-   <img src="' . base_path() . drupal_get_path('theme', 'conference_lite') . '/images/premium-08-isotope.jpg" />
-   </a></div> ',
+   '<div class="theme-settings-title theme-settings-title--premium-link"><a href="https://morethanthemes.com/themes/conferenceplus?utm_source=conference-lite-demo&utm_medium=theme-settings&utm_campaign=free-themes" target="_blank">'.t("Available in the Premium version of this theme").'</a></div>',
   );
 
   $form['mtt_settings']['google_maps_tab'] = array(
@@ -291,11 +259,7 @@ function conference_lite_form_system_theme_settings_alter(&$form, &$form_state) 
   $form['mtt_settings']['google_maps_tab']['premium_description'] = array(
    '#type' => 'item',
    '#markup' =>
-   '<div class="theme-settings-title">'.t("Available in the Premium version of this theme").'</div>
-   <div class="theme-settings-image-wrapper">
-   <a href="https://morethanthemes.com/themes/conferenceplus?utm_source=conference-lite-demo&utm_medium=theme-settings&utm_campaign=free-themes" target="_blank">
-   <img src="' . base_path() . drupal_get_path('theme', 'conference_lite') . '/images/premium-09-googlemaps.jpg" />
-   </a></div> ',
+   '<div class="theme-settings-title theme-settings-title--premium-link"><a href="https://morethanthemes.com/themes/conferenceplus?utm_source=conference-lite-demo&utm_medium=theme-settings&utm_campaign=free-themes" target="_blank">'.t("Available in the Premium version of this theme").'</a></div>',
   );
 
 }
