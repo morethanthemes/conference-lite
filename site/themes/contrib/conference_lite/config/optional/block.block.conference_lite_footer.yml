@@ -9,8 +9,8 @@ dependencies:
     - conference_lite
 id: conference_lite_footer
 theme: conference_lite
-region: sub_footer_first
-weight: 0
+region: footer
+weight: -13
 provider: null
 plugin: 'system_menu_block:footer'
 settings:

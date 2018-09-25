@@ -7,8 +7,8 @@ dependencies:
     - conference_lite
 id: conference_lite_powered
 theme: conference_lite
-region: footer_first
-weight: -7
+region: sidebar_second
+weight: -5
 provider: null
 plugin: system_powered_by_block
 settings:

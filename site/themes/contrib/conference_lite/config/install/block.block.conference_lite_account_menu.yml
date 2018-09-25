@@ -9,7 +9,7 @@ dependencies:
     - conference_lite
 id: conference_lite_account_menu
 theme: conference_lite
-region: sidebar_first
+region: sidebar_second
 weight: -6
 provider: null
 plugin: 'system_menu_block:account'
