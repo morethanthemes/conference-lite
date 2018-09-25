@@ -2,7 +2,7 @@ name: Conference Lite
 type: theme
 base theme: classy
 description: 'A flexible, recolorable theme with many regions and a responsive, mobile-first layout.'
-core: 8.x
+# core: 8.x
 libraries:
   - conference_lite/global-styling
   - conference_lite/background-image-block
@@ -53,3 +53,9 @@ regions:
   sub_footer_first: 'Subfooter First'
   footer: 'Subfooter Second'
   hidden_blocks_collection: 'Hidden blocks collection'
+
+# Information added by Drupal.org packaging script on 2018-09-25
+version: '8.x-1.0'
+core: '8.x'
+project: 'conference_lite'
+datestamp: 1537881487
