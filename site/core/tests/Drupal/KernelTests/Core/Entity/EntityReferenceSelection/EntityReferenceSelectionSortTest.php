@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\KernelTests\Core\Entity\EntityReferenceSelection;
 
 use Drupal\Component\Utility\Html;
@@ -32,18 +34,19 @@ class EntityReferenceSelectionSortTest extends EntityKernelTestBase {
     // Create an Article node type.
     $article = NodeType::create([
       'type' => 'article',
+      'name' => 'Article',
     ]);
     $article->save();
 
     // Test as a non-admin.
-    $normal_user = $this->createUser([], ['access content']);
+    $normal_user = $this->createUser(['access content']);
     \Drupal::currentUser()->setAccount($normal_user);
   }
 
   /**
    * Assert sorting by field and property.
    */
-  public function testSort() {
+  public function testSort(): void {
     // Add text field to entity, to sort by.
     FieldStorageConfig::create([
       'field_name' => 'field_text',

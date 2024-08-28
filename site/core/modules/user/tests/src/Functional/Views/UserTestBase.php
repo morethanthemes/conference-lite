@@ -1,13 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\user\Functional\Views;
 
 use Drupal\Tests\views\Functional\ViewTestBase;
 use Drupal\user\Entity\User;
 
-/**
- * @todo.
- */
 abstract class UserTestBase extends ViewTestBase {
 
   /**
@@ -34,7 +33,7 @@ abstract class UserTestBase extends ViewTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE, $modules = ['user_test_views']) {
+  protected function setUp($import_test_views = TRUE, $modules = ['user_test_views']): void {
     parent::setUp($import_test_views, $modules);
 
     $this->users[] = $this->drupalCreateUser();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\field\Kernel\Boolean;
 
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
@@ -60,7 +62,7 @@ class BooleanFormatterTest extends KernelTestBase {
 
     $this->entityType = 'entity_test';
     $this->bundle = $this->entityType;
-    $this->fieldName = mb_strtolower($this->randomMachineName());
+    $this->fieldName = $this->randomMachineName();
 
     $field_storage = FieldStorageConfig::create([
       'field_name' => $this->fieldName,
@@ -105,7 +107,7 @@ class BooleanFormatterTest extends KernelTestBase {
   /**
    * Tests boolean formatter output.
    */
-  public function testBooleanFormatter() {
+  public function testBooleanFormatter(): void {
     $data = [];
     $data[] = [0, [], 'Off'];
     $data[] = [1, [], 'On'];

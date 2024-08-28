@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\views\Functional\Plugin;
 
 use Drupal\Core\Url;
@@ -48,7 +50,7 @@ class MonthDatePluginTest extends ViewTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp($import_test_views = TRUE, $modules = ['views_test_config']): void {
+  protected function setUp($import_test_views = TRUE, $modules = ['views_test_config']): void {
     parent::setUp($import_test_views, $modules);
     $utc = new \DateTimeZone('UTC');
     $format = 'Y-m-d h:i:s';
@@ -63,7 +65,7 @@ class MonthDatePluginTest extends ViewTestBase {
   /**
    * Tests the Month Date Plugin.
    */
-  public function testMonthDatePlugin() {
+  public function testMonthDatePlugin(): void {
     $assert_session = $this->assertSession();
 
     // Test fallback value.

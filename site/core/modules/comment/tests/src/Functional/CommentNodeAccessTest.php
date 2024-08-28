@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\comment\Functional;
 
 use Drupal\comment\CommentManagerInterface;
@@ -51,14 +53,12 @@ class CommentNodeAccessTest extends CommentTestBase {
   /**
    * Tests that threaded comments can be viewed.
    */
-  public function testThreadedCommentView() {
+  public function testThreadedCommentView(): void {
     // Set comments to have subject required and preview disabled.
-    $this->drupalLogin($this->adminUser);
     $this->setCommentPreview(DRUPAL_DISABLED);
     $this->setCommentForm(TRUE);
     $this->setCommentSubject(TRUE);
     $this->setCommentSettings('default_mode', CommentManagerInterface::COMMENT_MODE_THREADED, 'Comment paging changed.');
-    $this->drupalLogout();
 
     // Post comment.
     $this->drupalLogin($this->webUser);

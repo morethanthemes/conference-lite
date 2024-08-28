@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\system\Kernel\Form;
 
 use Drupal\form_test\FormTestObject;
@@ -25,7 +27,7 @@ class FormObjectTest extends ConfigFormTestBase {
   protected function setUp(): void {
     parent::setUp();
 
-    $this->form = new FormTestObject($this->container->get('config.factory'));
+    $this->form = new FormTestObject($this->container->get('config.factory'), $this->container->get('config.typed'));
     $this->values = [
       'bananas' => [
         '#value' => $this->randomString(10),

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\block\Functional;
 
 use Drupal\Tests\BrowserTestBase;
@@ -67,7 +69,7 @@ class BlockLanguageTest extends BrowserTestBase {
   /**
    * Tests the visibility settings for the blocks based on language.
    */
-  public function testLanguageBlockVisibility() {
+  public function testLanguageBlockVisibility(): void {
     // Check if the visibility setting is available.
     $default_theme = $this->config('system.theme')->get('default');
     $this->drupalGet('admin/structure/block/add/system_powered_by_block' . '/' . $default_theme);
@@ -79,7 +81,7 @@ class BlockLanguageTest extends BrowserTestBase {
     // Enable a standard block and set the visibility setting for one language.
     $edit = [
       'visibility[language][langcodes][en]' => TRUE,
-      'id' => strtolower($this->randomMachineName(8)),
+      'id' => $this->randomMachineName(8),
       'region' => 'sidebar_first',
     ];
     $this->drupalGet('admin/structure/block/add/system_powered_by_block' . '/' . $default_theme);
@@ -106,7 +108,7 @@ class BlockLanguageTest extends BrowserTestBase {
   /**
    * Tests if the visibility settings are removed if the language is deleted.
    */
-  public function testLanguageBlockVisibilityLanguageDelete() {
+  public function testLanguageBlockVisibilityLanguageDelete(): void {
     // Enable a standard block and set the visibility setting for one language.
     $edit = [
       'visibility' => [
@@ -143,7 +145,7 @@ class BlockLanguageTest extends BrowserTestBase {
   /**
    * Tests block language visibility with different language types.
    */
-  public function testMultipleLanguageTypes() {
+  public function testMultipleLanguageTypes(): void {
     // Customize content language detection to be different from interface
     // language detection.
     $edit = [
@@ -165,7 +167,7 @@ class BlockLanguageTest extends BrowserTestBase {
     $this->assertSession()->fieldExists('visibility[language][context_mapping][language]');
 
     // Enable a standard block and set visibility to French only.
-    $block_id = strtolower($this->randomMachineName(8));
+    $block_id = $this->randomMachineName(8);
     $edit = [
       'visibility[language][context_mapping][language]' => '@language.current_language_context:language_interface',
       'visibility[language][langcodes][fr]' => TRUE,

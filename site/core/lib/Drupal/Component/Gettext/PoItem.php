@@ -5,7 +5,7 @@ namespace Drupal\Component\Gettext;
 /**
  * PoItem handles one translation.
  *
- * @todo: This class contains some really old legacy code.
+ * @todo This class contains some really old legacy code.
  * @see https://www.drupal.org/node/1637662
  */
 class PoItem {
@@ -198,8 +198,7 @@ class PoItem {
     if (isset($values['comment'])) {
       $this->setComment($values['comment']);
     }
-    if (isset($this->source) &&
-        strpos($this->source, self::DELIMITER) !== FALSE) {
+    if (isset($this->source) && str_contains($this->source, self::DELIMITER)) {
       $this->setSource(explode(self::DELIMITER, $this->source));
       $this->setTranslation(explode(self::DELIMITER, $this->translation ?? ''));
       $this->setPlural(count($this->source) > 1);

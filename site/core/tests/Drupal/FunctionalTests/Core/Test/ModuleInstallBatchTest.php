@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\FunctionalTests\Core\Test;
 
 use Drupal\entity_test\Entity\EntityTest;
@@ -13,8 +15,6 @@ use Drupal\Tests\BrowserTestBase;
  *
  * @group Test
  * @group FunctionalTestSetupTrait
- *
- * @see \Drupal\simpletest\Tests\SimpleTestInstallBatchTest
  */
 class ModuleInstallBatchTest extends BrowserTestBase {
 
@@ -33,7 +33,7 @@ class ModuleInstallBatchTest extends BrowserTestBase {
   /**
    * Tests loading entities created in a batch in test_batch_test_install().
    */
-  public function testLoadingEntitiesCreatedInBatch() {
+  public function testLoadingEntitiesCreatedInBatch(): void {
     foreach ([1, 2] as $id) {
       $this->assertNotNull(EntityTest::load($id), 'Successfully loaded entity ' . $id);
     }

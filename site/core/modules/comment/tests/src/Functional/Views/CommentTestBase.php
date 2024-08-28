@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\comment\Functional\Views;
 
 use Drupal\comment\Tests\CommentTestTrait;
@@ -58,7 +60,7 @@ abstract class CommentTestBase extends ViewTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE, $modules = ['comment_test_views']) {
+  protected function setUp($import_test_views = TRUE, $modules = ['comment_test_views']): void {
     parent::setUp($import_test_views, $modules);
 
     // Add two users, create a node with the user1 as author and another node

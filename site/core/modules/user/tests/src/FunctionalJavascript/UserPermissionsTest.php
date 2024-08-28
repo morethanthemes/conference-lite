@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\user\FunctionalJavascript;
 
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
@@ -50,7 +52,7 @@ class UserPermissionsTest extends WebDriverTestBase {
   /**
    * Tests the dummy checkboxes added to the permissions page.
    */
-  public function testPermissionCheckboxes() {
+  public function testPermissionCheckboxes(): void {
     $this->drupalLogin($this->adminUser);
     $this->drupalGet('admin/people/permissions');
 

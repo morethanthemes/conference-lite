@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\views\Kernel\Handler;
 
 use Drupal\Core\Session\AccountInterface;
@@ -67,7 +69,7 @@ class FieldEntityLinkTest extends ViewsKernelTestBase {
   /**
    * Tests entity link fields.
    */
-  public function testEntityLink() {
+  public function testEntityLink(): void {
     // Anonymous users cannot see edit/delete links.
     $expected_results = ['canonical' => TRUE, 'edit-form' => FALSE, 'delete-form' => FALSE, 'canonical_raw' => TRUE, 'canonical_raw_absolute' => TRUE];
     $this->doTestEntityLink(\Drupal::currentUser(), $expected_results);
@@ -143,11 +145,11 @@ class FieldEntityLinkTest extends ViewsKernelTestBase {
             $expected_link = '<a href="' . $path . $destination . '" hreflang="en">' . $info[$template]['label'] . '</a>';
           }
           else {
-            $expected_link = $path;
+            $expected_link = (string) $path;
           }
         }
         $link = $view->style_plugin->getField($index, $info[$template]['field_id']);
-        $this->assertEquals($expected_link, $link);
+        $this->assertSame($expected_link, (string) $link);
       }
       $index++;
     }

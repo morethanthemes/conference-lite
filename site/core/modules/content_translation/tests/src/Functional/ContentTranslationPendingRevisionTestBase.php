@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\content_translation\Functional;
 
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -48,7 +50,7 @@ abstract class ContentTranslationPendingRevisionTestBase extends ContentTranslat
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     $this->entityTypeId = 'node';
     $this->bundle = 'article';
 

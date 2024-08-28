@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\migrate\Kernel;
 
 use Drupal\migrate\MigrateExecutable;
@@ -28,7 +30,6 @@ class MigrateRollbackTest extends MigrateTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
-    $this->installEntitySchema('taxonomy_vocabulary');
     $this->installEntitySchema('taxonomy_term');
     $this->installConfig(['taxonomy']);
   }
@@ -36,7 +37,7 @@ class MigrateRollbackTest extends MigrateTestBase {
   /**
    * Tests rolling back configuration and content entities.
    */
-  public function testRollback() {
+  public function testRollback(): void {
     // We use vocabularies to demonstrate importing and rolling back
     // configuration entities.
     $vocabulary_data_rows = [

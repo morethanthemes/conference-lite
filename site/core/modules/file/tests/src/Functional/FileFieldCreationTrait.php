@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\file\Functional;
 
 use Drupal\field\Entity\FieldStorageConfig;
@@ -14,7 +16,8 @@ trait FileFieldCreationTrait {
    * Creates a new file field.
    *
    * @param string $name
-   *   The name of the new field (all lowercase), exclude the "field_" prefix.
+   *   The name of the new field (all lowercase). The Field UI 'field_' prefix
+   *   is not added to the field name.
    * @param string $entity_type
    *   The entity type.
    * @param string $bundle
@@ -47,7 +50,8 @@ trait FileFieldCreationTrait {
    * Attaches a file field to an entity.
    *
    * @param string $name
-   *   The name of the new field (all lowercase), exclude the "field_" prefix.
+   *   The name of the new field (all lowercase). The Field UI 'field_' prefix
+   *   is not added to the field name.
    * @param string $entity_type
    *   The entity type this field will be added to.
    * @param string $bundle

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\system\Functional\Session;
 
 use Drupal\Core\Database\Database;
@@ -9,6 +11,7 @@ use Drupal\Tests\BrowserTestBase;
  * Drupal session handling tests.
  *
  * @group Session
+ * @group #slow
  */
 class SessionTest extends BrowserTestBase {
 
@@ -31,7 +34,7 @@ class SessionTest extends BrowserTestBase {
    * @covers \Drupal\Core\Session\WriteSafeSessionHandler::isSessionWritable
    * @covers \Drupal\Core\Session\SessionManager::regenerate
    */
-  public function testSessionSaveRegenerate() {
+  public function testSessionSaveRegenerate(): void {
     $session_handler = $this->container->get('session_handler.write_safe');
     $this->assertTrue($session_handler->isSessionWritable(), 'session_handler->isSessionWritable() initially returns TRUE.');
     $session_handler->setSessionWritable(FALSE);
@@ -85,10 +88,10 @@ class SessionTest extends BrowserTestBase {
   /**
    * Tests data persistence via the session_test module callbacks.
    */
-  public function testDataPersistence() {
+  public function testDataPersistence(): void {
     $user = $this->drupalCreateUser([]);
     // Enable sessions.
-    $this->sessionReset($user->id());
+    $this->sessionReset();
 
     $this->drupalLogin($user);
 
@@ -154,7 +157,7 @@ class SessionTest extends BrowserTestBase {
 
     // Login, the data should persist.
     $this->drupalLogin($user);
-    $this->sessionReset($user->id());
+    $this->sessionReset();
     // Verify that the session persists for an authenticated user after
     // logging out and then back in.
     $this->drupalGet('session-test/get');
@@ -162,14 +165,14 @@ class SessionTest extends BrowserTestBase {
 
     // Change session and create another user.
     $user2 = $this->drupalCreateUser([]);
-    $this->sessionReset($user2->id());
+    $this->sessionReset();
     $this->drupalLogin($user2);
   }
 
   /**
    * Tests storing data in Session() object.
    */
-  public function testSessionPersistenceOnLogin() {
+  public function testSessionPersistenceOnLogin(): void {
     // Store information via hook_user_login().
     $user = $this->drupalCreateUser();
     $this->drupalLogin($user);
@@ -181,7 +184,7 @@ class SessionTest extends BrowserTestBase {
   /**
    * Tests that empty anonymous sessions are destroyed.
    */
-  public function testEmptyAnonymousSession() {
+  public function testEmptyAnonymousSession(): void {
     // Disable the dynamic_page_cache module; it'd cause session_test's debug
     // output (that is added in
     // SessionTestSubscriber::onKernelResponseSessionTest()) to not be added.
@@ -246,7 +249,7 @@ class SessionTest extends BrowserTestBase {
   /**
    * Tests that sessions are only saved when necessary.
    */
-  public function testSessionWrite() {
+  public function testSessionWrite(): void {
     $user = $this->drupalCreateUser([]);
     $this->drupalLogin($user);
     $connection = Database::getConnection();
@@ -297,7 +300,7 @@ class SessionTest extends BrowserTestBase {
   /**
    * Tests that empty session IDs are not allowed.
    */
-  public function testEmptySessionID() {
+  public function testEmptySessionID(): void {
     $user = $this->drupalCreateUser([]);
     $this->drupalLogin($user);
     $this->drupalGet('session-test/is-logged-in');
@@ -326,7 +329,7 @@ class SessionTest extends BrowserTestBase {
   /**
    * Tests session bag.
    */
-  public function testSessionBag() {
+  public function testSessionBag(): void {
     // Ensure the flag is absent to start with.
     $this->drupalGet('/session-test/has-bag-flag');
     $this->assertSessionCookie(FALSE);
@@ -359,6 +362,20 @@ class SessionTest extends BrowserTestBase {
   }
 
   /**
+   * Test exception thrown during session write close.
+   */
+  public function testSessionWriteError(): void {
+    // Login to ensure a session exists.
+    $user = $this->drupalCreateUser([]);
+    $this->drupalLogin($user);
+
+    // Trigger an exception in SessionHandler::write().
+    $this->expectExceptionMessageMatches("/^Drupal\\\\Core\\\\Database\\\\DatabaseExceptionWrapper:/");
+    $this->drupalGet('/session-test/trigger-write-exception');
+    $this->assertSession()->statusCodeEquals(500);
+  }
+
+  /**
    * Reset the cookie file so that it refers to the specified user.
    */
   public function sessionReset() {
@@ -372,7 +389,7 @@ class SessionTest extends BrowserTestBase {
   }
 
   /**
-   * Assert whether the SimpleTest browser sent a session cookie.
+   * Assert whether the test browser sent a session cookie.
    *
    * @internal
    */
@@ -386,7 +403,7 @@ class SessionTest extends BrowserTestBase {
   }
 
   /**
-   * Assert whether $_SESSION is empty at the beginning of the request.
+   * Assert whether the session is empty at the beginning of the request.
    *
    * @internal
    */

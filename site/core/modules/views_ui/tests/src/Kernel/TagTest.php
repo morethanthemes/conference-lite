@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\views_ui\Kernel;
 
 use Drupal\Tests\views\Kernel\ViewsKernelTestBase;
@@ -11,6 +13,7 @@ use Drupal\views\Entity\View;
  * Tests the views ui tagging functionality.
  *
  * @group views_ui
+ * @group #slow
  */
 class TagTest extends ViewsKernelTestBase {
 
@@ -24,7 +27,7 @@ class TagTest extends ViewsKernelTestBase {
   /**
    * Tests the ViewsUIController::autocompleteTag() function.
    */
-  public function testViewsUiAutocompleteTag() {
+  public function testViewsUiAutocompleteTag(): void {
     \Drupal::moduleHandler()->loadInclude('views_ui', 'inc', 'admin');
 
     // Save 15 views with a tag.
@@ -33,7 +36,11 @@ class TagTest extends ViewsKernelTestBase {
       $suffix = $i % 2 ? 'odd' : 'even';
       $tag = 'autocomplete_tag_test_' . $suffix . $this->randomMachineName();
       $tags[] = $tag;
-      View::create(['tag' => $tag, 'id' => $this->randomMachineName()])->save();
+      View::create([
+        'tag' => $tag,
+        'id' => $this->randomMachineName(),
+        'label' => 'Test',
+      ])->save();
     }
 
     // Make sure just ten results are returned.
@@ -73,11 +80,15 @@ class TagTest extends ViewsKernelTestBase {
    *
    * @dataProvider providerViewsUiAutocompleteIndividualTags
    */
-  public function testViewsUiAutocompleteIndividualTags($expected_tag, $search_string) {
+  public function testViewsUiAutocompleteIndividualTags($expected_tag, $search_string): void {
     $controller = ViewsUIController::create($this->container);
     $request = $this->container->get('request_stack')->getCurrentRequest();
     $tag = 'comma, 你好, Foo bar';
-    View::create(['tag' => $tag, 'id' => $this->randomMachineName()])->save();
+    View::create([
+      'tag' => $tag,
+      'id' => $this->randomMachineName(),
+      'label' => 'Test',
+    ])->save();
     $request->query->set('q', $search_string);
     $result = $controller->autocompleteTag($request);
     $matches = (array) json_decode($result->getContent());
@@ -91,7 +102,7 @@ class TagTest extends ViewsKernelTestBase {
    * @return array[]
    *   The data set.
    */
-  public function providerViewsUiAutocompleteIndividualTags() {
+  public static function providerViewsUiAutocompleteIndividualTags() {
     return [
       'tag' => ['comma', 'comma'],
       'case insensitive tag' => ['comma', 'COMMA'],

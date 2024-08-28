@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\language\Functional;
 
 use Drupal\Tests\BrowserTestBase;
@@ -40,7 +42,7 @@ class LanguageBrowserDetectionAcceptLanguageTest extends BrowserTestBase {
 
     // Create FR.
     ConfigurableLanguage::createFromLangcode('fr')->save();
-    // Set language detection to url and browser detection.
+    // Set language detection to URL and browser detection.
     $this->drupalGet('/admin/config/regional/language/detection');
     $this->submitForm([
       'language_interface[enabled][language-url]' => TRUE,
@@ -74,7 +76,7 @@ class LanguageBrowserDetectionAcceptLanguageTest extends BrowserTestBase {
   /**
    * Tests with browsers with and without Accept-Language header.
    */
-  public function testAcceptLanguageEmptyDefault() {
+  public function testAcceptLanguageEmptyDefault(): void {
 
     // Check correct headers.
     $this->drupalGet('/en/system-test/echo/language test', [], ['Accept-Language' => 'en']);
@@ -100,7 +102,7 @@ class LanguageBrowserDetectionAcceptLanguageTest extends BrowserTestBase {
     $this->assertSession()->responseHeaderDoesNotExist('X-Drupal-Cache');
 
     // Check with browser without language settings - should return fallback language.
-    $this->drupalGet('/system-test/echo/language test', [], ['Accept-Language' => NULL]);
+    $this->drupalGet('/system-test/echo/language test', [], ['Accept-Language' => '']);
     $this->assertSession()->responseHeaderEquals('Content-Language', 'en');
     $this->assertSession()->responseHeaderDoesNotExist('X-Drupal-Cache');
 
