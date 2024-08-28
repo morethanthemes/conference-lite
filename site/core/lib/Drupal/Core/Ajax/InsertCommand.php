@@ -5,9 +5,9 @@ namespace Drupal\Core\Ajax;
 /**
  * Generic AJAX command for inserting content.
  *
- * This command instructs the client to insert the given HTML using whichever
- * jQuery DOM manipulation method has been specified in the #ajax['method']
- * variable of the element that triggered the request.
+ * This command instructs the client to insert the given render array or HTML
+ * using whichever jQuery DOM manipulation method has been specified in the
+ * #ajax['method'] variable of the element that triggered the request.
  *
  * This command is implemented by Drupal.AjaxCommands.prototype.insert()
  * defined in misc/ajax.js.
@@ -55,7 +55,7 @@ class InsertCommand implements CommandInterface, CommandWithAttachedAssetsInterf
    * @param array $settings
    *   An array of JavaScript settings to be passed to any attached behaviors.
    */
-  public function __construct($selector, $content, array $settings = NULL) {
+  public function __construct($selector, $content, ?array $settings = NULL) {
     $this->selector = $selector;
     $this->content = $content;
     $this->settings = $settings;

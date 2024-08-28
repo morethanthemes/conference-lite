@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\datetime\Kernel;
 
 use Drupal\Core\Datetime\DrupalDateTime;
@@ -30,15 +32,7 @@ class DateTimeFormInjectionTest extends KernelTestBase implements FormInterface 
    *
    * @var array
    */
-  public static $modules = ['system', 'datetime'];
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::setUp();
-    $this->installSchema('system', ['key_value_expire', 'sequences']);
-  }
+  protected static $modules = ['system', 'datetime'];
 
   /**
    * {@inheritdoc}
@@ -99,7 +93,7 @@ class DateTimeFormInjectionTest extends KernelTestBase implements FormInterface 
   /**
    * Tests custom string injection serialization.
    */
-  public function testDatetimeSerialization() {
+  public function testDatetimeSerialization(): void {
     $form_state = new FormState();
     $form_state->setRequestMethod('POST');
     $form_state->setCached();
@@ -107,6 +101,10 @@ class DateTimeFormInjectionTest extends KernelTestBase implements FormInterface 
     $form_id = $form_builder->getFormId($this, $form_state);
     $form = $form_builder->retrieveForm($form_id, $form_state);
     $form_builder->prepareForm($form_id, $form, $form_state);
+    // Set up $form_state so that the form is properly submitted.
+    $form_state->setUserInput(['form_id' => $form_id]);
+    $form_state->setProgrammed();
+    $form_state->setSubmitted();
     $form_builder->processForm($form_id, $form, $form_state);
   }
 

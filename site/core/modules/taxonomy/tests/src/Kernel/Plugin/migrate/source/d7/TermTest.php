@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\taxonomy\Kernel\Plugin\migrate\source\d7;
 
 use Drupal\Tests\migrate\Kernel\MigrateSqlSourceTestBase;
@@ -15,12 +17,12 @@ class TermTest extends MigrateSqlSourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['taxonomy', 'migrate_drupal'];
+  protected static $modules = ['taxonomy', 'migrate_drupal'];
 
   /**
    * {@inheritdoc}
    */
-  public function providerSource() {
+  public static function providerSource() {
     $tests = [];
 
     // The source data.
@@ -31,7 +33,6 @@ class TermTest extends MigrateSqlSourceTestBase {
         'name' => 'name value 1',
         'description' => 'description value 1',
         'weight' => 0,
-        'is_container' => FALSE,
       ],
       [
         'tid' => 2,
@@ -39,7 +40,6 @@ class TermTest extends MigrateSqlSourceTestBase {
         'name' => 'name value 2',
         'description' => 'description value 2',
         'weight' => 0,
-        'is_container' => TRUE,
       ],
       [
         'tid' => 3,
@@ -47,7 +47,6 @@ class TermTest extends MigrateSqlSourceTestBase {
         'name' => 'name value 3',
         'description' => 'description value 3',
         'weight' => 0,
-        'is_container' => FALSE,
       ],
       [
         'tid' => 4,
@@ -55,7 +54,6 @@ class TermTest extends MigrateSqlSourceTestBase {
         'name' => 'name value 4',
         'description' => 'description value 4',
         'weight' => 1,
-        'is_container' => FALSE,
       ],
       [
         'tid' => 5,
@@ -63,7 +61,6 @@ class TermTest extends MigrateSqlSourceTestBase {
         'name' => 'name value 5',
         'description' => 'description value 5',
         'weight' => 1,
-        'is_container' => FALSE,
       ],
       [
         'tid' => 6,
@@ -71,7 +68,6 @@ class TermTest extends MigrateSqlSourceTestBase {
         'name' => 'name value 6',
         'description' => 'description value 6',
         'weight' => 0,
-        'is_container' => TRUE,
       ],
       [
         'tid' => 7,
@@ -79,7 +75,6 @@ class TermTest extends MigrateSqlSourceTestBase {
         'name' => 'name value 7',
         'description' => 'description value 7',
         'weight' => 0,
-        'is_container' => TRUE,
       ],
     ];
     $tests[0]['source_data']['taxonomy_term_hierarchy'] = [
@@ -254,6 +249,10 @@ class TermTest extends MigrateSqlSourceTestBase {
         'name' => 'forum_containers',
         'value' => 'a:3:{i:0;s:1:"5";i:1;s:1:"6";i:2;s:1:"7";}',
       ],
+      [
+        'name' => 'language_default',
+        'value' => 'O:8:"stdClass":1:{s:8:"language";s:2:"en";}',
+      ],
     ];
 
     // The expected results.
@@ -265,6 +264,7 @@ class TermTest extends MigrateSqlSourceTestBase {
         'description' => 'description value 1 (description_field)',
         'weight' => 0,
         'parent' => [0],
+        'language' => 'en',
       ],
       [
         'tid' => 2,
@@ -273,6 +273,7 @@ class TermTest extends MigrateSqlSourceTestBase {
         'description' => 'description value 2',
         'weight' => 0,
         'parent' => [0],
+        'language' => 'en',
       ],
       [
         'tid' => 3,
@@ -281,6 +282,7 @@ class TermTest extends MigrateSqlSourceTestBase {
         'description' => 'description value 3',
         'weight' => 0,
         'parent' => [0],
+        'language' => 'en',
       ],
       [
         'tid' => 4,
@@ -289,6 +291,7 @@ class TermTest extends MigrateSqlSourceTestBase {
         'description' => 'description value 4 (description_field)',
         'weight' => 1,
         'parent' => [1],
+        'language' => 'en',
       ],
       [
         'tid' => 5,
@@ -297,6 +300,7 @@ class TermTest extends MigrateSqlSourceTestBase {
         'description' => 'description value 5',
         'weight' => 1,
         'parent' => [2],
+        'language' => 'en',
       ],
       [
         'tid' => 6,
@@ -305,6 +309,7 @@ class TermTest extends MigrateSqlSourceTestBase {
         'description' => 'description value 6',
         'weight' => 0,
         'parent' => [3, 2],
+        'language' => 'en',
       ],
       [
         'tid' => 7,
@@ -313,6 +318,7 @@ class TermTest extends MigrateSqlSourceTestBase {
         'description' => 'description value 7',
         'weight' => 0,
         'parent' => [0],
+        'language' => 'en',
       ],
     ];
 
@@ -330,6 +336,7 @@ class TermTest extends MigrateSqlSourceTestBase {
         'description' => 'description value 1 (description_field)',
         'weight' => 0,
         'parent' => [0],
+        'language' => 'en',
       ],
       [
         'tid' => 4,
@@ -338,6 +345,7 @@ class TermTest extends MigrateSqlSourceTestBase {
         'description' => 'description value 4 (description_field)',
         'weight' => 1,
         'parent' => [1],
+        'language' => 'en',
       ],
     ];
     $tests[1]['expected_count'] = NULL;

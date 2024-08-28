@@ -1,8 +1,8 @@
-(function ($, Drupal, drupalSettings) {
-  Drupal.behaviors.mtowlCarouselSpeakers = {
+(function ($, Drupal, drupalSettings, once) {
+  Drupal.behaviors.mtowlCarouselPromotedPosts = {
     attach: function (context, settings) {
-      $(context).find('.mt-carousel-speakers').once('mtowlCarouselSpeakersInit').each(function() {
-        $(this).owlCarousel({
+      once('mtowlCarouselSpeakersInit', ".mt-carousel-speakers", context).forEach(function(item) {
+        $(item).owlCarousel({
           items: 2,
           responsive:{
             0:{
@@ -34,4 +34,4 @@
       });
     }
   };
-})(jQuery, Drupal, drupalSettings);
+})(jQuery, Drupal, drupalSettings, once);

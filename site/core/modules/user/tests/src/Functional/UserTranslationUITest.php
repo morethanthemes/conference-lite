@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\user\Functional;
 
 use Drupal\Tests\content_translation\Functional\ContentTranslationUITestBase;
@@ -19,19 +21,44 @@ class UserTranslationUITest extends ContentTranslationUITestBase {
   protected $name;
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultCacheContexts = [
+    'languages:language_interface',
+    'theme',
+    'url.query_args:_wrapper_format',
+    'user.permissions',
+    'url.site',
+  ];
+
+  /**
    * Modules to enable.
    *
    * @var array
    */
-  public static $modules = ['language', 'content_translation', 'user', 'views'];
+  protected static $modules = [
+    'language',
+    'content_translation',
+    'user',
+    'views',
+  ];
 
-  protected function setUp() {
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
     $this->entityTypeId = 'user';
     $this->testLanguageSelector = FALSE;
     $this->name = $this->randomMachineName();
     parent::setUp();
+    $this->doSetup();
 
-    \Drupal::entityManager()->getStorage('user')->resetCache();
+    \Drupal::entityTypeManager()->getStorage('user')->resetCache();
   }
 
   /**
@@ -63,22 +90,17 @@ class UserTranslationUITest extends ContentTranslationUITestBase {
       // We only want to test the title for non-english translations.
       if ($langcode != 'en') {
         $options = ['language' => $languages[$langcode]];
-        $url = $entity->urlInfo('edit-form', $options);
+        $url = $entity->toUrl('edit-form', $options);
         $this->drupalGet($url);
-
-        $title = t('@title [%language translation]', [
-          '@title' => $entity->getTranslation($langcode)->label(),
-          '%language' => $languages[$langcode]->getName(),
-        ]);
-        $this->assertRaw($title);
+        $this->assertSession()->pageTextContains("{$entity->getTranslation($langcode)->label()} [{$languages[$langcode]->getName()} translation]");
       }
     }
   }
 
   /**
-   * Test translated user deletion.
+   * Tests translated user deletion.
    */
-  public function testTranslatedUserDeletion() {
+  public function testTranslatedUserDeletion(): void {
     $this->drupalLogin($this->administrator);
     $entity_id = $this->createEntity($this->getNewEntityValues('en'), 'en');
 
@@ -92,7 +114,8 @@ class UserTranslationUITest extends ContentTranslationUITestBase {
       'edit-form',
       ['language' => $this->container->get('language_manager')->getLanguage('en')]
     );
-    $this->drupalPostForm($url, [], t('Cancel account'));
+    $this->drupalGet($url);
+    $this->clickLink('Cancel account');
     $this->assertSession()->statusCodeEquals(200);
   }
 

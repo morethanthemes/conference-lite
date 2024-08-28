@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\system\Functional\Form;
 
 use Drupal\Tests\BrowserTestBase;
@@ -16,18 +18,23 @@ class ElementsContainerTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['form_test'];
+  protected static $modules = ['form_test'];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
 
   /**
    * Tests the #optional container property.
    */
-  public function testOptionalContainerElements() {
+  public function testOptionalContainerElements(): void {
     $this->drupalGet('form-test/optional-container');
     $assertSession = $this->assertSession();
     $assertSession->elementNotExists('css', 'div.empty_optional');
-    $assertSession->elementExists('css', 'div.empty_nonoptional');
+    $assertSession->elementExists('css', 'div.empty_non_optional');
     $assertSession->elementExists('css', 'div.nonempty_optional');
-    $assertSession->elementExists('css', 'div.nonempty_nonoptional');
+    $assertSession->elementExists('css', 'div.nonempty_non_optional');
   }
 
 }

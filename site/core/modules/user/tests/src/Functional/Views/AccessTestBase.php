@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\user\Functional\Views;
 
 /**
@@ -12,7 +14,7 @@ abstract class AccessTestBase extends UserTestBase {
    *
    * @var array
    */
-  public static $modules = ['block'];
+  protected static $modules = ['block'];
 
   /**
    * Contains a user object that has no special permissions.
@@ -45,8 +47,8 @@ abstract class AccessTestBase extends UserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE) {
-    parent::setUp($import_test_views);
+  protected function setUp($import_test_views = TRUE, $modules = []): void {
+    parent::setUp($import_test_views, $modules);
     $this->drupalPlaceBlock('system_breadcrumb_block');
 
     $this->enableViewsTestModule();
@@ -56,9 +58,10 @@ abstract class AccessTestBase extends UserTestBase {
     $this->webRole = $roles[0];
 
     $this->normalRole = $this->drupalCreateRole([]);
-    $this->normalUser = $this->drupalCreateUser(['views_test_data test permission']);
-    $this->normalUser->addRole($this->normalRole);
-    $this->normalUser->save();
+    $this->normalUser = $this->drupalCreateUser([
+      'views_test_data test permission',
+    ]);
+    $this->normalUser->addRole($this->normalRole)->save();
     // @todo when all the plugin information is cached make a reset function and
     // call it here.
   }

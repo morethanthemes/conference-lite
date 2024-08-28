@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\FunctionalTests\Routing;
 
 use Drupal\field\Entity\FieldConfig;
@@ -7,6 +9,7 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\link\LinkItemInterface;
 use Drupal\Tests\BrowserTestBase;
+use Drupal\Tests\content_translation\Traits\ContentTranslationTestTrait;
 
 /**
  * Tests that route lookup is cached by the current language.
@@ -15,21 +18,37 @@ use Drupal\Tests\BrowserTestBase;
  */
 class RouteCachingLanguageTest extends BrowserTestBase {
 
+  use ContentTranslationTestTrait;
+
   /**
    * Modules to enable.
    *
    * @var array
    */
-  public static $modules = ['path', 'node', 'content_translation', 'link', 'block'];
+  protected static $modules = [
+    'path',
+    'node',
+    'content_translation',
+    'link',
+    'block',
+  ];
 
   /**
-   * An user with permissions to administer content types.
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * A user with permissions to administer content types.
    *
    * @var \Drupal\user\UserInterface
    */
   protected $webUser;
 
-  protected function setUp() {
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
     parent::setUp();
 
     $this->createContentType(['type' => 'page']);
@@ -54,17 +73,10 @@ class RouteCachingLanguageTest extends BrowserTestBase {
     $this->drupalLogin($this->webUser);
 
     // Enable French language.
-    ConfigurableLanguage::createFromLangcode('fr')->save();
+    static::createLanguageFromLangcode('fr');
 
     // Enable translation for page node.
-    $edit = [
-      'entity_types[node]' => 1,
-      'settings[node][page][translatable]' => 1,
-      'settings[node][page][fields][path]' => 1,
-      'settings[node][page][fields][body]' => 1,
-      'settings[node][page][settings][language][language_alterable]' => 1,
-    ];
-    $this->drupalPostForm('admin/config/regional/content-language', $edit, t('Save configuration'));
+    static::enableContentTranslation('node', 'page');
 
     // Create a field with settings to validate.
     $field_storage = FieldStorageConfig::create([
@@ -83,12 +95,12 @@ class RouteCachingLanguageTest extends BrowserTestBase {
     ]);
     $field->save();
 
-    entity_get_form_display('node', 'page', 'default')
+    \Drupal::service('entity_display.repository')->getFormDisplay('node', 'page', 'default')
       ->setComponent('field_link', [
         'type' => 'link_default',
       ])
       ->save();
-    entity_get_display('node', 'page', 'full')
+    \Drupal::service('entity_display.repository')->getViewDisplay('node', 'page', 'full')
       ->setComponent('field_link', [
         'type' => 'link',
       ])
@@ -97,9 +109,11 @@ class RouteCachingLanguageTest extends BrowserTestBase {
     // Enable URL language detection and selection and set a prefix for both
     // languages.
     $edit = ['language_interface[enabled][language-url]' => 1];
-    $this->drupalPostForm('admin/config/regional/language/detection', $edit, 'Save settings');
+    $this->drupalGet('admin/config/regional/language/detection');
+    $this->submitForm($edit, 'Save settings');
     $edit = ['prefix[en]' => 'en'];
-    $this->drupalPostForm('admin/config/regional/language/detection/url', $edit, 'Save configuration');
+    $this->drupalGet('admin/config/regional/language/detection/url');
+    $this->submitForm($edit, 'Save configuration');
 
     // Reset the cache after changing the negotiation settings as that changes
     // how links are built.
@@ -115,7 +129,7 @@ class RouteCachingLanguageTest extends BrowserTestBase {
    *
    * @dataProvider providerLanguage
    */
-  public function testLinkTranslationWithAlias($source_langcode) {
+  public function testLinkTranslationWithAlias($source_langcode): void {
     $source_url_options = [
       'language' => ConfigurableLanguage::load($source_langcode),
     ];
@@ -126,7 +140,8 @@ class RouteCachingLanguageTest extends BrowserTestBase {
       'title[0][value]' => 'Target page',
       'path[0][alias]' => '/target-page',
     ];
-    $this->drupalPostForm('node/add/page', $edit, t('Save'), $source_url_options);
+    $this->drupalGet('node/add/page', $source_url_options);
+    $this->submitForm($edit, 'Save');
 
     // Confirm that the alias works.
     $assert_session = $this->assertSession();
@@ -142,7 +157,8 @@ class RouteCachingLanguageTest extends BrowserTestBase {
       'field_link[0][title]' => 'Target page',
       'path[0][alias]' => '/link-page',
     ];
-    $this->drupalPostForm('node/add/page', $edit, t('Save'), $source_url_options);
+    $this->drupalGet('node/add/page', $source_url_options);
+    $this->submitForm($edit, 'Save');
 
     // Make sure the link node is displayed with a working link.
     $assert_session->pageTextContains('Link page');
@@ -156,14 +172,14 @@ class RouteCachingLanguageTest extends BrowserTestBase {
 
     $this->drupalGet('link-page', $source_url_options);
     $this->clickLink('Translate');
-    $this->clickLink(t('Add'));
+    $this->clickLink('Add');
 
     // Do not change the link field.
     $edit = [
       'title[0][value]' => 'Translated link page',
       'path[0][alias]' => '/translated-link-page',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save (this translation)');
+    $this->submitForm($edit, 'Save (this translation)');
 
     $assert_session->pageTextContains('Translated link page');
 
@@ -176,7 +192,7 @@ class RouteCachingLanguageTest extends BrowserTestBase {
   /**
    * Data provider for testFromUri().
    */
-  public function providerLanguage() {
+  public static function providerLanguage() {
     return [
       ['en'],
       ['fr'],

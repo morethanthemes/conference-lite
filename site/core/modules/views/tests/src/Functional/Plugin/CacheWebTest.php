@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\views\Functional\Plugin;
 
 use Drupal\Tests\system\Functional\Cache\AssertPageCacheContextsAndTagsTrait;
@@ -29,13 +31,18 @@ class CacheWebTest extends ViewTestBase {
    *
    * @var array
    */
-  public static $modules = ['taxonomy'];
+  protected static $modules = ['taxonomy'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE) {
-    parent::setUp($import_test_views);
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp($import_test_views = TRUE, $modules = ['views_test_config']): void {
+    parent::setUp($import_test_views, $modules);
 
     $this->enableViewsTestModule();
   }
@@ -43,7 +50,7 @@ class CacheWebTest extends ViewTestBase {
   /**
    * Tests the output caching on an actual page.
    */
-  public function testCacheOutputOnPage() {
+  public function testCacheOutputOnPage(): void {
     $view = Views::getView('test_display');
     $view->storage->setStatus(TRUE);
     $view->setDisplay('page_1');
@@ -64,8 +71,8 @@ class CacheWebTest extends ViewTestBase {
     $this->assertFalse($render_cache->get($cache_element));
 
     $this->drupalGet('test-display');
-    $this->assertResponse(200);
-    $this->assertTrue($render_cache->get($cache_element));
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertNotEmpty($render_cache->get($cache_element));
     $cache_tags = [
       'config:user.role.anonymous',
       'config:views.view.test_display',
@@ -75,20 +82,20 @@ class CacheWebTest extends ViewTestBase {
     $this->assertCacheTags($cache_tags);
 
     $this->drupalGet('test-display');
-    $this->assertResponse(200);
-    $this->assertTrue($render_cache->get($cache_element));
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertNotEmpty($render_cache->get($cache_element));
     $this->assertCacheTags($cache_tags);
   }
 
   /**
    * Tests that a display without caching still contains the cache metadata.
    */
-  public function testDisplayWithoutCacheStillBubblesMetadata() {
+  public function testDisplayWithoutCacheStillBubblesMetadata(): void {
     $view = Views::getView('test_display');
 
     $uncached_block = $view->buildRenderable('block_1', [], FALSE);
     $cached_block = $view->buildRenderable('block_1', [], TRUE);
-    $this->assertEqual($uncached_block['#cache']['contexts'], $cached_block['#cache']['contexts'], 'Cache contexts are the same when you render the view cached and uncached.');
+    $this->assertEquals($uncached_block['#cache']['contexts'], $cached_block['#cache']['contexts'], 'Cache contexts are the same when you render the view cached and uncached.');
   }
 
 }

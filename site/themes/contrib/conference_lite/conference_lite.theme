@@ -146,7 +146,8 @@ function conference_lite_preprocess_html(&$variables) {
   }
 
   // Add page-node-id class to body
-  if ($node = \Drupal::request()->attributes->get('node')) {
+  $node = \Drupal::request()->attributes->get('node');
+  if (!empty($node) && $node instanceof \Drupal\node\NodeInterface) {
     $variables['attributes']['class'][] = 'page-node-' . $node->id();
   }
 
@@ -698,7 +699,8 @@ function conference_lite_preprocess_page(&$variables) {
 
 function conference_lite_theme_suggestions_page_alter(array &$suggestions, array $variables) {
   // Add content type suggestions.
-  if ($node = \Drupal::request()->attributes->get('node')) {
+  $node = \Drupal::request()->attributes->get('node');
+  if (!empty($node) && $node instanceof \Drupal\node\NodeInterface) {
     array_splice($suggestions, 1, 0, 'page__node__' . $node->getType());
   }
 
@@ -770,11 +772,11 @@ function conference_lite_preprocess_node__article(&$variables) {
 
   // Count the words of article in order to calculate the reading time
   $node_content = $variables['content'];
-  $node_content = render($node_content);
+  $node_content = \Drupal::service('renderer')->render($node_content);
   $words = str_word_count(strip_tags($node_content));
   if (isset($variables['content']['comment'])) {
     $node_comments = $variables['content']['comment'];
-    $node_comments = render($node_comments);
+    $node_comments = \Drupal::service('renderer')->render($node_comments);
     $words = $words - str_word_count(strip_tags($node_comments));
   }
   $variables['minutes'] = floor($words / 275);

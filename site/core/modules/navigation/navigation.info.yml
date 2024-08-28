@@ -1,0 +1,16 @@
+name: Navigation
+description: New administration navigation
+package: Core (Experimental)
+lifecycle: experimental
+# version: VERSION
+configure: navigation.settings
+type: module
+dependencies:
+  - drupal:block
+  - drupal:file
+  - drupal:layout_builder
+
+# Information added by Drupal.org packaging script on 2024-08-08
+version: '10.3.2'
+project: 'drupal'
+datestamp: 1723109893

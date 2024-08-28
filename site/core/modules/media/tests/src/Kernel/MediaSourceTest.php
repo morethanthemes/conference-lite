@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\media\Kernel;
 
 use Drupal\Core\Form\FormState;
@@ -16,9 +18,14 @@ use Drupal\media\Entity\MediaType;
 class MediaSourceTest extends MediaKernelTestBase {
 
   /**
+   * {@inheritdoc}
+   */
+  protected static $modules = ['field_ui'];
+
+  /**
    * Tests that metadata is correctly mapped irrespective of how media is saved.
    */
-  public function testSave() {
+  public function testSave(): void {
     $field_storage = FieldStorageConfig::create([
       'entity_type' => 'media',
       'field_name' => 'field_to_map_to',
@@ -40,7 +47,6 @@ class MediaSourceTest extends MediaKernelTestBase {
           'value' => 'Snowball',
         ],
         'thumbnail_uri' => [
-          'title' => 'Thumbnail',
           'value' => 'public://TheSisko.png',
         ],
       ]);
@@ -85,7 +91,7 @@ class MediaSourceTest extends MediaKernelTestBase {
   /**
    * Tests default media name functionality.
    */
-  public function testDefaultName() {
+  public function testDefaultName(): void {
     // Make sure that the default name is set if not provided by the user.
     /** @var \Drupal\media\MediaInterface $media */
     $media = Media::create(['bundle' => $this->testMediaType->id()]);
@@ -129,7 +135,7 @@ class MediaSourceTest extends MediaKernelTestBase {
   /**
    * Tests metadata mapping functionality.
    */
-  public function testMetadataMapping() {
+  public function testMetadataMapping(): void {
     $field_name = 'field_to_map_to';
     $attribute_name = 'attribute_to_map';
     $storage = FieldStorageConfig::create([
@@ -210,7 +216,7 @@ class MediaSourceTest extends MediaKernelTestBase {
   /**
    * Tests the getSourceFieldValue() method.
    */
-  public function testGetSourceFieldValue() {
+  public function testGetSourceFieldValue(): void {
     /** @var \Drupal\media\MediaInterface $media */
     $media = Media::create([
       'bundle' => $this->testMediaType->id(),
@@ -219,18 +225,22 @@ class MediaSourceTest extends MediaKernelTestBase {
     $media->save();
     $media_source = $media->getSource();
     $this->assertSame('some_value', $media_source->getSourceFieldValue($media));
+
+    // Test that NULL is returned if there is no value in the source field.
+    $media->set('field_media_test', NULL)->save();
+    $this->assertNull($media_source->getSourceFieldValue($media));
   }
 
   /**
    * Tests the thumbnail functionality.
    */
-  public function testThumbnail() {
+  public function testThumbnail(): void {
     file_put_contents('public://thumbnail1.jpg', '');
     file_put_contents('public://thumbnail2.jpg', '');
 
     // Save a media item and make sure thumbnail was added.
     \Drupal::state()->set('media_source_test_attributes', [
-      'thumbnail_uri' => ['title' => 'Thumbnail', 'value' => 'public://thumbnail1.jpg'],
+      'thumbnail_uri' => ['value' => 'public://thumbnail1.jpg'],
     ]);
     /** @var \Drupal\media\MediaInterface $media */
     $media = Media::create([
@@ -242,45 +252,46 @@ class MediaSourceTest extends MediaKernelTestBase {
     $this->assertSame('public://thumbnail1.jpg', $media_source->getMetadata($media, 'thumbnail_uri'), 'Value of the thumbnail metadata attribute is not correct.');
     $media->save();
     $this->assertSame('public://thumbnail1.jpg', $media->thumbnail->entity->getFileUri(), 'Thumbnail was not added to the media item.');
-    $this->assertSame('Mr. Jones', $media->thumbnail->title, 'Title text was not set on the thumbnail.');
-    $this->assertEquals('Thumbnail', $media->thumbnail->alt, 'Alt text was not set on the thumbnail.');
+    // We expect the title not to be present on the Thumbnail.
+    $this->assertEmpty($media->thumbnail->title);
+    $this->assertSame('', $media->thumbnail->alt);
 
     // Now change the metadata attribute and make sure that the thumbnail stays
     // the same.
     \Drupal::state()->set('media_source_test_attributes', [
-      'thumbnail_uri' => ['title' => 'Thumbnail', 'value' => 'public://thumbnail2.jpg'],
+      'thumbnail_uri' => ['value' => 'public://thumbnail2.jpg'],
     ]);
     $this->assertSame('public://thumbnail2.jpg', $media_source->getMetadata($media, 'thumbnail_uri'), 'Value of the thumbnail metadata attribute is not correct.');
     $media->save();
     $this->assertSame('public://thumbnail1.jpg', $media->thumbnail->entity->getFileUri(), 'Thumbnail was not preserved.');
-    $this->assertSame('Mr. Jones', $media->thumbnail->title, 'Title text was not set on the thumbnail.');
-    $this->assertEquals('Thumbnail', $media->thumbnail->alt, 'Alt text was not set on the thumbnail.');
+    $this->assertEmpty($media->thumbnail->title);
+    $this->assertSame('', $media->thumbnail->alt);
 
     // Remove the thumbnail and make sure that it is auto-updated on save.
     $media->thumbnail->target_id = NULL;
     $this->assertSame('public://thumbnail2.jpg', $media_source->getMetadata($media, 'thumbnail_uri'), 'Value of the thumbnail metadata attribute is not correct.');
     $media->save();
     $this->assertSame('public://thumbnail2.jpg', $media->thumbnail->entity->getFileUri(), 'New thumbnail was not added to the media item.');
-    $this->assertSame('Mr. Jones', $media->thumbnail->title, 'Title text was not set on the thumbnail.');
-    $this->assertEquals('Thumbnail', $media->thumbnail->alt, 'Alt text was not set on the thumbnail.');
+    $this->assertEmpty($media->thumbnail->title);
+    $this->assertSame('', $media->thumbnail->alt);
 
     // Change the metadata attribute again, change the source field value too
     // and make sure that the thumbnail updates.
     \Drupal::state()->set('media_source_test_attributes', [
-      'thumbnail_uri' => ['title' => 'Thumbnail', 'value' => 'public://thumbnail1.jpg'],
+      'thumbnail_uri' => ['value' => 'public://thumbnail1.jpg'],
     ]);
     $media->field_media_test->value = 'some_new_value';
     $this->assertSame('public://thumbnail1.jpg', $media_source->getMetadata($media, 'thumbnail_uri'), 'Value of the thumbnail metadata attribute is not correct.');
     $media->save();
     $this->assertSame('public://thumbnail1.jpg', $media->thumbnail->entity->getFileUri(), 'New thumbnail was not added to the media item.');
-    $this->assertSame('Mr. Jones', $media->thumbnail->title, 'Title text was not set on the thumbnail.');
-    $this->assertEquals('Thumbnail', $media->thumbnail->alt, 'Alt text was not set on the thumbnail.');
+    $this->assertEmpty($media->thumbnail->title);
+    $this->assertSame('', $media->thumbnail->alt);
 
     // Change the thumbnail metadata attribute and make sure that the thumbnail
     // is set correctly.
     \Drupal::state()->set('media_source_test_attributes', [
-      'thumbnail_uri' => ['title' => 'Should not be used', 'value' => 'public://thumbnail1.jpg'],
-      'alternative_thumbnail_uri' => ['title' => 'Should be used', 'value' => 'public://thumbnail2.jpg'],
+      'thumbnail_uri' => ['value' => 'public://thumbnail1.jpg'],
+      'alternative_thumbnail_uri' => ['value' => 'public://thumbnail2.jpg'],
     ]);
     \Drupal::state()->set('media_source_test_definition', ['thumbnail_uri_metadata_attribute' => 'alternative_thumbnail_uri']);
     $media = Media::create([
@@ -293,14 +304,33 @@ class MediaSourceTest extends MediaKernelTestBase {
     $this->assertSame('public://thumbnail2.jpg', $media_source->getMetadata($media, 'alternative_thumbnail_uri'), 'Value of the thumbnail metadata attribute is not correct.');
     $media->save();
     $this->assertSame('public://thumbnail2.jpg', $media->thumbnail->entity->getFileUri(), 'Correct metadata attribute was not used for the thumbnail.');
-    $this->assertSame('Mr. Jones', $media->thumbnail->title, 'Title text was not set on the thumbnail.');
-    $this->assertEquals('Thumbnail', $media->thumbnail->alt, 'Alt text was not set on the thumbnail.');
+    $this->assertEmpty($media->thumbnail->title);
+    $this->assertSame('', $media->thumbnail->alt);
+
+    // Set the width and height metadata attributes and make sure they're used
+    // for the thumbnail.
+    \Drupal::state()->set('media_source_test_definition', [
+      'thumbnail_width_metadata_attribute' => 'width',
+      'thumbnail_height_metadata_attribute' => 'height',
+    ]);
+    \Drupal::state()->set('media_source_test_attributes', [
+      'width' => ['value' => 1024],
+      'height' => ['value' => 768],
+    ]);
+    $media = Media::create([
+      'bundle' => $this->testMediaType->id(),
+      'name' => 'Are you looking at me?',
+      'field_media_test' => 'some_value',
+    ]);
+    $media->save();
+    $this->assertSame(1024, $media->thumbnail->width);
+    $this->assertSame(768, $media->thumbnail->height);
 
     // Enable queued thumbnails and make sure that the entity gets the default
     // thumbnail initially.
     \Drupal::state()->set('media_source_test_definition', []);
     \Drupal::state()->set('media_source_test_attributes', [
-      'thumbnail_uri' => ['title' => 'Should not be used', 'value' => 'public://thumbnail1.jpg'],
+      'thumbnail_uri' => ['value' => 'public://thumbnail1.jpg'],
     ]);
     $this->testMediaType->setQueueThumbnailDownloadsStatus(TRUE)->save();
     $media = Media::create([
@@ -311,8 +341,8 @@ class MediaSourceTest extends MediaKernelTestBase {
     $this->assertSame('public://thumbnail1.jpg', $media->getSource()->getMetadata($media, 'thumbnail_uri'), 'Value of the metadata attribute is not correct.');
     $media->save();
     $this->assertSame('public://media-icons/generic/generic.png', $media->thumbnail->entity->getFileUri(), 'Default thumbnail was not set initially.');
-    $this->assertSame('Mr. Jones', $media->thumbnail->title, 'Title text was not set on the thumbnail.');
-    $this->assertEquals('Thumbnail', $media->thumbnail->alt, 'Alt text was not set on the thumbnail.');
+    $this->assertEmpty($media->thumbnail->title);
+    $this->assertSame('', $media->thumbnail->alt);
 
     // Process the queue item and make sure that the thumbnail was updated too.
     $queue_name = 'media_entity_thumbnail';
@@ -330,18 +360,15 @@ class MediaSourceTest extends MediaKernelTestBase {
 
     $media = Media::load($media->id());
     $this->assertSame('public://thumbnail1.jpg', $media->thumbnail->entity->getFileUri(), 'Thumbnail was not updated by the queue.');
-    $this->assertSame('Mr. Jones', $media->thumbnail->title, 'Title text was not set on the thumbnail.');
-    $this->assertSame('Thumbnail', $media->thumbnail->alt, 'Alt text was not set on the thumbnail.');
+    $this->assertEmpty($media->thumbnail->title);
+    $this->assertSame('', $media->thumbnail->alt);
 
-    // Set alt and title metadata attributes and make sure they are used for the
-    // thumbnail.
+    // Set the alt metadata attribute and make sure it's used for the thumbnail.
     \Drupal::state()->set('media_source_test_definition', [
       'thumbnail_alt_metadata_attribute' => 'alt',
-      'thumbnail_title_metadata_attribute' => 'title',
     ]);
     \Drupal::state()->set('media_source_test_attributes', [
-      'alt' => ['title' => 'Alt text', 'value' => 'This will be alt.'],
-      'title' => ['title' => 'Title text', 'value' => 'This will be title.'],
+      'alt' => ['value' => 'This will be alt.'],
     ]);
     $media = Media::create([
       'bundle' => $this->testMediaType->id(),
@@ -350,14 +377,14 @@ class MediaSourceTest extends MediaKernelTestBase {
     ]);
     $media->save();
     $this->assertSame('Boxer', $media->getName(), 'Correct name was not set on the media item.');
-    $this->assertSame('This will be title.', $media->thumbnail->title, 'Title text was not set on the thumbnail.');
-    $this->assertSame('This will be alt.', $media->thumbnail->alt, 'Alt text was not set on the thumbnail.');
+    $this->assertEmpty($media->thumbnail->title);
+    $this->assertSame('This will be alt.', $media->thumbnail->alt);
   }
 
   /**
    * Tests the media item constraints functionality.
    */
-  public function testConstraints() {
+  public function testConstraints(): void {
     // Test entity constraints.
     \Drupal::state()->set('media_source_test_entity_constraints', [
       'MediaTestConstraint' => [],
@@ -424,7 +451,7 @@ class MediaSourceTest extends MediaKernelTestBase {
   /**
    * Tests logic related to the automated source field creation.
    */
-  public function testSourceFieldCreation() {
+  public function testSourceFieldCreation(): void {
     /** @var \Drupal\media\MediaTypeInterface $type */
     $type = MediaType::create([
       'id' => 'test_type',
@@ -486,12 +513,30 @@ class MediaSourceTest extends MediaKernelTestBase {
     $this->assertTrue($field->isRequired(), 'Field is not required.');
     $this->assertEquals('Test source with constraints', $field->label(), 'Incorrect label is used.');
     $this->assertSame('test_constraints_type', $field->getTargetBundle(), 'Field is not targeting correct bundle.');
+
+    // Test that new source fields respect the configured field prefix, no
+    // prefix at all if that's what's configured.
+    $this->installConfig('field_ui');
+    $this->config('field_ui.settings')
+      ->set('field_prefix', 'prefix_')
+      ->save();
+    $type = MediaType::create([
+      'id' => $this->randomMachineName(),
+      'label' => $this->randomString(),
+      'source' => 'test',
+    ]);
+    $this->assertSame('prefix_media_test', $type->getSource()->createSourceField($type)->getName());
+
+    $this->config('field_ui.settings')
+      ->set('field_prefix', '')
+      ->save();
+    $this->assertSame('media_test', $type->getSource()->createSourceField($type)->getName());
   }
 
   /**
    * Tests configuration form submit handler on the base media source plugin.
    */
-  public function testSourceConfigurationSubmit() {
+  public function testSourceConfigurationSubmit(): void {
     /** @var \Drupal\media\MediaSourceManager $manager */
     $manager = $this->container->get('plugin.manager.media.source');
     $form = [];
@@ -526,19 +571,19 @@ class MediaSourceTest extends MediaKernelTestBase {
   /**
    * Tests different display options for the source field.
    */
-  public function testDifferentSourceFieldDisplays() {
+  public function testDifferentSourceFieldDisplays(): void {
     $id = 'test_different_displays';
     $field_name = 'field_media_different_display';
 
     $this->createMediaTypeViaForm($id, $field_name);
 
     // Source field not in displays.
-    $display = entity_get_display('media', $id, 'default');
+    $display = \Drupal::service('entity_display.repository')->getViewDisplay('media', $id);
     $components = $display->getComponents();
     $this->assertArrayHasKey($field_name, $components);
     $this->assertSame('entity_reference_entity_id', $components[$field_name]['type']);
 
-    $display = entity_get_form_display('media', $id, 'default');
+    $display = \Drupal::service('entity_display.repository')->getFormDisplay('media', $id);
     $components = $display->getComponents();
     $this->assertArrayHasKey($field_name, $components);
     $this->assertSame('entity_reference_autocomplete_tags', $components[$field_name]['type']);
@@ -547,17 +592,17 @@ class MediaSourceTest extends MediaKernelTestBase {
   /**
    * Tests hidden source field in media type.
    */
-  public function testHiddenSourceField() {
+  public function testHiddenSourceField(): void {
     $id = 'test_hidden_source_field';
     $field_name = 'field_media_hidden';
 
     $this->createMediaTypeViaForm($id, $field_name);
 
     // Source field not in displays.
-    $display = entity_get_display('media', $id, 'default');
+    $display = \Drupal::service('entity_display.repository')->getViewDisplay('media', $id);
     $this->assertArrayNotHasKey($field_name, $display->getComponents());
 
-    $display = entity_get_form_display('media', $id, 'default');
+    $display = \Drupal::service('entity_display.repository')->getFormDisplay('media', $id);
     $this->assertArrayNotHasKey($field_name, $display->getComponents());
   }
 
@@ -581,7 +626,7 @@ class MediaSourceTest extends MediaKernelTestBase {
     $form_state->setValues([
       'label' => 'Test type',
       'id' => $source_plugin_id,
-      'op' => t('Save'),
+      'op' => 'Save and manage fields',
     ]);
 
     /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager */
